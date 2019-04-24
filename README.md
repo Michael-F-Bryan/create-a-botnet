@@ -27,5 +27,5 @@ submitted for inclusion in the work by you, as defined in the Apache-2.0
 license, shall be dual licensed as above, without any additional terms or
 conditions.
 
-[Rendered Guide]: https://michael-f-bryan.github.io/create-a-botnet/book/
-[API Docs]: https://michael-f-bryan.github.io/create-a-botnet/crate-docs/
+[Rendered Guide]: https://michael-f-bryan.github.io/create-a-botnet/book/index.html
+[API Docs]: https://michael-f-bryan.github.io/create-a-botnet/crate-docs/index.html
