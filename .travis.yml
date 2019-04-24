@@ -7,12 +7,12 @@ rust:
 
 install:
   - export PATH=~/.cargo/bin:$PATH
-  #- rustup target add wasm32-unknown-unknown
+  - rustup target add wasm32-unknown-unknown
   - command -v mdbook >/dev/null 2>&1 || cargo install --debug mdbook
 
 script:
   - cargo build --all --verbose
-  #- cargo build --package hello-world --target wasm32-unknown-unknown
+  - cargo build --package hello-world --target wasm32-unknown-unknown
   - cargo test --all --verbose
 
 before_deploy:
@@ -29,6 +29,6 @@ deploy:
   skip_cleanup: true
   github_token: $GITHUB_TOKEN 
   keep_history: true
-  local_dir: target/doc
+  local_dir: pages
   on:
     branch: master
