@@ -5,3 +5,5 @@ authors = ["Michael Bryan <michaelfbryan@gmail.com>"]
 edition = "2018"
 
 [dependencies]
+wasmer-runtime = "0.3.0"
+failure = "0.1.5"
