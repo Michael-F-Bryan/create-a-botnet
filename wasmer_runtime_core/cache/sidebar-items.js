@@ -1,0 +1,1 @@
+initSidebarItems({"constant":[["WASMER_VERSION_HASH","A unique ID generated from the version of Wasmer for use with cache versioning"]],"enum":[["Error",""],["InvalidFileType",""]],"struct":[["Artifact",""],["WasmHash","The hash of a wasm module."]],"trait":[["Cache","A generic cache for storing and loading compiled wasm modules."]]});

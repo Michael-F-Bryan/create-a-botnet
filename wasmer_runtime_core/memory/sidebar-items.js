@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["MemoryType",""]],"struct":[["Atomic",""],["Atomically",""],["DynamicMemory","This is an internal-only api."],["Memory","A shared or unshared wasm linear memory."],["MemoryView",""],["SharedMemory",""],["SharedStaticMemory",""],["StaticMemory","This is an internal-only api."],["UnsharedMemory",""]]});

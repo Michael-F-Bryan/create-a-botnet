@@ -1,0 +1,1 @@
+initSidebarItems({"constant":[["VERSION","The current version of this crate"]],"struct":[["CraneliftCompiler",""]]});

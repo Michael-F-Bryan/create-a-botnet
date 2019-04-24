@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["ExportIndex",""]],"struct":[["DataInitializer","A data initializer for linear memory."],["Module","A compiled WebAssembly module."],["ModuleInfo",""],["NameIndex",""],["NamespaceIndex",""],["StringTable",""],["StringTableBuilder",""],["TableInitializer","A WebAssembly table initializer."]]});
