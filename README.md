@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.com/Michael-F-Bryan/create-a-botnet.svg?branch=master)](https://travis-ci.com/Michael-F-Bryan/create-a-botnet)
 
-([Rendered Guide]|[API Docs])
+([Rendered Guide] | [API Docs])
 
 Exploring the ways WASM can be used to provide a Rust program with pluggable 
 functionality.
