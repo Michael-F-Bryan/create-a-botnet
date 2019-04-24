@@ -1,0 +1,449 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Create a Botnet - A Thought Experiment on Using WASM for Plugins</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        
+
+        
+    </head>
+    <body class="light">
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "";
+            var default_theme = "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { } 
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            document.body.className = theme;
+            document.querySelector('html').className = theme + ' js';
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <ol class="chapter"><li><a href="overview.html"><strong aria-hidden="true">1.</strong> Overview</a></li><li><a href="rudimentary-execution-environment/index.html"><strong aria-hidden="true">2.</strong> A Rudimentary Execution Environment</a></li></ol>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar" class="menu-bar">
+                    <div id="menu-bar-sticky-container">
+                        <div class="left-buttons">
+                            <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                                <i class="fa fa-paint-brush"></i>
+                            </button>
+                            <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                                <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                            </ul>
+                            
+                            <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                                <i class="fa fa-search"></i>
+                            </button>
+                            
+                        </div>
+
+                        <h1 class="menu-title">Create a Botnet - A Thought Experiment on Using WASM for Plugins</h1> 
+
+                        <div class="right-buttons">
+                            <a href="print.html" title="Print this book" aria-label="Print this book">
+                                <i id="print-button" class="fa fa-print"></i>
+                            </a>
+                            
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <a class="header" href="#creating-a-botnet---a-thought-experiment-on-using-wasm-for-plugins" id="creating-a-botnet---a-thought-experiment-on-using-wasm-for-plugins"><h1>Creating a Botnet - A Thought Experiment on Using WASM for Plugins</h1></a>
+<p>There's a lot of fuss being made in the <em>Rust</em> community about <em>Web Assembly</em>.
+In particular the ability to compile <em>Rust</em> (or any other supported language) to
+an architecture-independent binary format for executing sandboxed code.</p>
+<p>I think this is awesome.</p>
+<p>The first thing which comes to mind is using WASM for dynamically adding
+functionality to a program (commonly referred to as a <em>plugin</em>), and what better
+way to explore this than implementing our own crappy botnet?</p>
+<a class="header" href="#the-rough-design" id="the-rough-design"><h2>The Rough Design</h2></a>
+<p>Our botnet will be composed of a couple main parts:</p>
+<ul>
+<li>The server - for serving up &quot;jobs&quot; to execute</li>
+<li>The execution environment - a sandbox for executing jobs and letting them
+interact with the wider world</li>
+<li>The jobs to be executed - WASM modules which expose some sort of <code>Plugin</code>
+interface</li>
+</ul>
+<blockquote>
+<p><strong>Note:</strong> Because this is only a thought experiment, I won't be going into
+the mechanism used for <em>spreading</em> our bots.  This isn't really relevant to
+WASM and plugins, so I'll just be running the execution environment on
+machines I own (this is one of the things which separate &quot;real&quot; botnets and
+most online cloud platforms 😜).</p>
+</blockquote>
+<a class="header" href="#see-also" id="see-also"><h2>See Also</h2></a>
+<ul>
+<li><a href="https://youtu.be/YDQICTKlr9g">RustLatam 2019 - Kevin Hoffman: WebAssembly with Rust</a></li>
+<li><a href="https://youtu.be/ULQRGXziF3s">Rust Cologne: WASM in the wild</a></li>
+<li><a href="https://blog.cloudflare.com/introducing-wrangler-cli/">🤠 The Wrangler CLI: Deploying Rust with WASM on Cloudflare Workers</a></li>
+<li><a href="https://blog.scottlogic.com/2018/10/18/serverless-rust.html">Serverless Rust with AWS Lambda and WebAssembly</a></li>
+</ul>
+<a class="header" href="#a-rudimentary-execution-environment" id="a-rudimentary-execution-environment"><h1>A Rudimentary Execution Environment</h1></a>
+<p>Before we can get onto the interesting stuff we need to set up our project.</p>
+<p>We'll be taking advantage of cargo workspaces to reduce compilation times and
+ensure all dependencies are the same version, so make a top-level <code>Cargo.toml</code>
+and set up the following project structure:</p>
+<ul>
+<li><code>bot</code>: The execution environment (executable)</li>
+<li><code>server</code>: The server (executable)</li>
+<li><code>core</code>: The common interface shared between the execution environment and our
+&quot;jobs&quot; (library)</li>
+<li><code>hello-world</code>: A dummy plugin which will be compiled to WASM (library)</li>
+</ul>
+<pre><code class="language-console">$ cargo new --lib core
+$ cargo new --lib hello-world
+$ cargo new --bin bot
+$ cargo new --bin server
+$ cat &lt;&lt; EOF &gt; Cargo.toml
+[workspace]
+members = [&quot;core&quot;, &quot;bot&quot;, &quot;server&quot;, &quot;hello-world&quot;]
+EOF
+</code></pre>
+<a class="header" href="#an-initial-execution-environment" id="an-initial-execution-environment"><h2>An Initial Execution Environment</h2></a>
+<p>For now we just want to get the bare minimum running. Luckily most of the hard
+work of reading and JIT-compiling a WASM binary is done for us, in the form of
+the <a href="https://docs.rs/wasmer-runtime">wasmer-runtime</a> crate.</p>
+<p>Let's create a simple program to load a WASM binary, execute the <code>on_startup()</code>
+function, and exit.</p>
+<pre><code class="language-console">$ cd bot
+$ cargo add wasmer-runtime failure
+$ cat src/main.rs
+
+use std::env;
+use std::error::Error;
+use std::fs;
+
+fn main() -&gt; Result&lt;(), Box&lt;Error&gt;&gt; {
+    let binary = env::args().nth(1).ok_or_else(|| {
+        failure::err_msg(&quot;Usage: ./bot &lt;wasm-binary&gt;&quot;).compat()
+    })?;
+    let wasm = fs::read(&amp;binary)?;
+
+    let imports = wasmer_runtime::imports!();
+    let instance = wasmer_runtime::instantiate(&amp;wasm, &amp;imports)?;
+    instance.call(&quot;on_startup&quot;, &amp;[])?;
+
+    Ok(())
+}
+</code></pre>
+<p>Amusingly, more lines are dedicated to imports, command-line arguments, and
+reading the file than actually executing it.</p>
+<a class="header" href="#hello-world" id="hello-world"><h2>Hello World</h2></a>
+<p>Now we've got a rudimentary execution environment up and running, we can start
+implementing the functionality for our &quot;bot&quot;.</p>
+<p>The execution environment is <em>technically</em> only looking for a <code>on_startup()</code>
+function with the signature <code>fn()</code>, so let's give it one.</p>
+<pre><code class="language-console">$ cd ../hello-world
+$ cat src/lib.rs
+
+#[no_mangle]
+pub extern &quot;C&quot; fn on_startup() {}
+</code></pre>
+<p>And then compile it to WASM:</p>
+<pre><code class="language-console">$ cargo build --target wasm32-unknown-unknown
+$ ls ../target/wasm32-unknown-unknown/debug/
+build  deps  examples  hello_world.d  hello_world.wasm  incremental  native
+</code></pre>
+<p>With any luck, we should now be able to execute our <code>hello-world</code> plugin.</p>
+<pre><code class="language-console">$ cargo run --package bot -- ../target/wasm32-unknown-unknown/debug/hello_world.wasm
+   Compiling bot v0.1.0 (/home/michael/Documents/create-a-botnet/bot)
+    Finished dev [unoptimized + debuginfo] target(s) in 2.07s
+     Running `/home/michael/Documents/create-a-botnet/target/debug/bot ../target/wasm32-unknown-unknown/debug/hello_world.wasm`
+$ echo $?
+0
+</code></pre>
+<p>Well it doesn't <em>look</em> like anything blew up, so I guess that's a good thing.
+But because the plugin doesn't emit any output (or even do any computation),
+it's a little hard to see if it actually ran...</p>
+<a class="header" href="#letting-a-plugin-interact-with-the-environment" id="letting-a-plugin-interact-with-the-environment"><h2>Letting a Plugin Interact with the Environment</h2></a>
+<p>If a plugin wants to do something useful, it'll need to interact with the
+outside world at some point. In WASM programs/libraries, this is accomplished by
+the execution environment providing functions that the WASM can then <em>import</em>.
+That's what the empty <code>wasmer_runtime::imports!()</code> from earlier was for.</p>
+<p>In Rust, you can import a function from WASM's runtime environment using a
+normal <code>extern</code> block, so let's import a <code>print()</code> function which will print the
+provided UTF-8 string.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+// hello-world/src/lib.rs
+
+extern &quot;C&quot; {
+    fn print(buffer: *const u8, length: u32) -&gt; i32;
+}
+
+#[no_mangle]
+pub extern &quot;C&quot; fn on_startup() {
+    let message = &quot;Hello, World!\n&quot;;
+    unsafe {
+        let bytes_written = print(message.as_ptr(), message.len() as u32);
+        assert_eq!(
+            bytes_written,
+            message.len() as i32,
+            &quot;Something went wrong printing the message&quot;
+        );
+    }
+}
+#}</code></pre></pre>
+<blockquote>
+<p><strong>Note:</strong> We need to use <code>unsafe</code> because there's no way for the compiler
+to guarantee* the environment will follow Rust's rules regarding <code>const</code>,
+or even that the <code>print()</code> function has the right signature.</p>
+<p>*In general!</p>
+</blockquote>
+<p>Let's re-compile the <code>hello-world</code> plugin and see if it can print
+<code>&quot;Hello, World!&quot;</code> to the screen.</p>
+<pre><code class="language-console">$ cargo build --target wasm32-unknown-unknown                                       
+   Compiling hello-world v0.1.0 (/home/michael/Documents/create-a-botnet/hello-world)
+    Finished dev [unoptimized + debuginfo] target(s) in 0.17s
+
+$ cargo run --package bot -- ../target/wasm32-unknown-unknown/debug/hello_world.wasm
+    Finished dev [unoptimized + debuginfo] target(s) in 0.08s
+     Running `/home/michael/Documents/create-a-botnet/target/debug/bot ../target/wasm32-unknown-unknown/debug/hello_world.wasm`
+Error: LinkError([ImportNotFound { namespace: &quot;env&quot;, name: &quot;print&quot; }])
+$ echo $?
+1
+</code></pre>
+<p>You'll notice execution failed with an <code>ImportNotFound</code> error. This is because
+each WASM binary has a metadata section listing all the functions it wants to
+import. Our execution environment hasn't provided a <code>print()</code> function, so the
+<code>wasmer_runtime::instantiate()</code> function failed during validation.</p>
+<p>Let's fix that:</p>
+<pre><pre class="playpen"><code class="language-rust">// bot/src/main.rs
+
+use std::env;
+use std::error::Error;
+use std::fs;
+use wasmer_runtime::Ctx;
+
+fn main() -&gt; Result&lt;(), Box&lt;Error&gt;&gt; {
+    let binary = env::args().nth(1).ok_or_else(|| {
+        failure::err_msg(&quot;Usage: ./bot &lt;wasm-binary&gt;&quot;).compat()
+    })?;
+    let wasm = fs::read(&amp;binary)?;
+
+    let imports = wasmer_runtime::imports! {
+        &quot;env&quot; =&gt; {
+            &quot;print&quot; =&gt; wasmer_runtime::func!(print),
+        },
+    };
+
+    let instance = wasmer_runtime::instantiate(&amp;wasm, &amp;imports)?;
+    instance.call(&quot;on_startup&quot;, &amp;[])?;
+
+    Ok(())
+}
+
+/// Print a UTF-8 string stored in WASM memory.
+fn print(ctx: &amp;mut Ctx, buffer: u32, length: u32) -&gt; i32 {
+    // WASM memory is stored in one or more linear arrays, where pointers are
+    // just indices into the array. At the moment wasmer only ever uses one
+    // memory page, so we can get away with hard-coding first memory &quot;page&quot;.
+    let memory = ctx.memory(0);
+    // and we want to view this page of memory as a bunch of u8's
+    let view = memory.view::&lt;u8&gt;();
+
+    // Translate the buffer &quot;pointer&quot; to indices and deal with out-of-bounds
+    // errors.
+    let start = buffer as usize;
+    let end = start + length as usize;
+    let bytes = match view.get(start..end) {
+        Some(b) =&gt; b,
+        None =&gt; {
+            eprintln!(&quot;Read out of bounds&quot;);
+            return -1;
+        }
+    };
+
+    // Convert our &amp;[Cell&lt;u8&gt;] to a string.
+    let bytes: Vec&lt;u8&gt; = bytes.into_iter().map(|b| b.get()).collect();
+    let message = match String::from_utf8(bytes) {
+        Ok(s) =&gt; s,
+        Err(e) =&gt; {
+            eprintln!(&quot;Unable to read the message as UTF-8, {}&quot;, e);
+            return -1;
+        }
+    };
+
+    // and now we can *finally* print the message
+    print!(&quot;{}&quot;, message);
+
+    message.len() as i32
+}
+</code></pre></pre>
+<p>You'll notice that the vast majority of work in <code>print()</code> was dedicated to
+translating arguments between the plugin's memory space and the executing
+program's. WASM only has 4 data types (<code>i32</code>, <code>i64</code>, <code>f32</code>, and <code>f64</code> in Rust
+parlance) that can be used when interacting with the environment, so that adds a
+couple complications.</p>
+<p>We'll make some nicer abstractions to simplify the process later on, but it'll
+do for now.</p>
+<p>Recompiling and executing:</p>
+<pre><code class="language-console">$ cargo run --package bot -- ../target/wasm32-unknown-unknown/debug/hello_world.wasm
+    Finished dev [unoptimized + debuginfo] target(s) in 0.08s
+     Running `/home/michael/Documents/create-a-botnet/target/debug/bot ../target/wasm32-unknown-unknown/debug/hello_world.wasm`
+Hello, World! 
+$ echo $?
+0
+</code></pre>
+<p>Congratulations if you've stayed with me up til now. It may not look like much,
+but we've covered most of the basics involved in embedding WASM in a Rust
+program. Now we just need to build up some abstractions to make interactions
+between the execution engine and plugin easier.</p>
+<a class="header" href="#exercises-for-the-reader" id="exercises-for-the-reader"><h2>Exercises for the Reader</h2></a>
+<ul>
+<li>What happens when the <code>print()</code> function defined in <code>hello-world</code>'s <code>extern</code>
+block has a different signature to the one provided in <code>bot</code>?</li>
+<li>Why can't I change the signature of <code>bot</code>'s <code>print()</code> function to something
+nice like <code>print(&amp;str) -&gt; Result&lt;usize, io::Error&gt;</code>?</li>
+<li>Read through <a href="https://rustwasm.github.io/docs/wasm-bindgen/contributing/design/index.html">The WASM-Bindgen Book</a>, in particular the
+<em>Internal Design</em> chapters. The developers already had to deal with the
+problems around accessing WASM memory, so we'll probably borrow some
+inspiration from them.</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+
+                
+            </nav>
+
+        </div>
+
+        
+
+        
+
+        
+
+        
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        
+
+        
+        
+        <script type="text/javascript">
+        window.addEventListener('load', function() {
+            window.setTimeout(window.print, 100);
+        });
+        </script>
+        
+        
+
+    </body>
+</html>
