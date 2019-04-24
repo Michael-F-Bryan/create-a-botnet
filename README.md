@@ -1,6 +1,11 @@
 # Create a Botnet - A Thought Experiment on Using WASM for Plugins
 
+[![Build Status](https://travis-ci.com/Michael-F-Bryan/create-a-botnet.svg?branch=master)](https://travis-ci.com/Michael-F-Bryan/create-a-botnet)
+
 ([Rendered Guide]|[API Docs])
+
+Exploring the ways WASM can be used to provide a Rust program with pluggable 
+functionality.
 
 > **Warning:** Not yet fit for human consumption. Browse at your own risk.
 
@@ -22,5 +27,5 @@ submitted for inclusion in the work by you, as defined in the Apache-2.0
 license, shall be dual licensed as above, without any additional terms or
 conditions.
 
-[Rendered Guide]:
-[API Docs]:
+[Rendered Guide]: https://michael-f-bryan.github.io/create-a-botnet/book/
+[API Docs]: https://michael-f-bryan.github.io/create-a-botnet/crate-docs/
