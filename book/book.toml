@@ -1,0 +1,6 @@
+[book]
+authors = ["Michael Bryan"]
+title = "Create a Botnet - A Thought Experiment on Using WASM for Plugins"
+
+[build]
+build-dir = "../target/book"
