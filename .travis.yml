@@ -1,0 +1,31 @@
+sudo: false
+language: rust
+cache:
+  - cargo
+
+install:
+  - export PATH=~/.cargo/bin:$PATH
+  - command -v mdbook >/dev/null 2>&1 || cargo install --debug mdbook
+
+script:
+  - cargo build --all --verbose
+  - cargo build --project hello-world --target wasm32-unknown-unknown
+  - cargo test --all --verbose
+
+before_deploy:
+  - cargo doc --all --verbose
+  - mdbook build book
+  - mkdir pages
+  - cp -r target/book pages/book
+  - cp -r target/doc pages/crate-docs
+  - echo '<meta http-equiv="refresh" content="0; url=book/index.html" />' > pages/index.html
+  - echo '<meta http-equiv="refresh" content="0; url=core/index.html" />' > pages/crate-docs/index.html
+
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN 
+  keep_history: true
+  local_dir: target/doc
+  on:
+    branch: master
