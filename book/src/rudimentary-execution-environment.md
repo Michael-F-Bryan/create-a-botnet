@@ -18,7 +18,7 @@ $ cargo new --lib hello-world
 $ cargo new --bin bot
 $ cargo new --bin server
 $ cat << EOF > Cargo.toml
-{{#include ../../../Cargo.toml::2}}
+{{#include ../../Cargo.toml::2}}
 EOF
 ```
 
