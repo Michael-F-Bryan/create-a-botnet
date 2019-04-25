@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Overview - Create a Botnet - A Thought Experiment on Using WASM for Plugins</title>
+        <title>A Better Plugin Interface - Create a Botnet - A Thought Experiment on Using WASM for Plugins</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -75,7 +75,7 @@
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <ol class="chapter"><li><a href="overview.html" class="active"><strong aria-hidden="true">1.</strong> Overview</a></li><li><a href="rudimentary-execution-environment.html"><strong aria-hidden="true">2.</strong> A Rudimentary Execution Environment</a></li><li><a href="better-plugins.html"><strong aria-hidden="true">3.</strong> A Better Plugin Interface</a></li></ol>
+            <ol class="chapter"><li><a href="overview.html"><strong aria-hidden="true">1.</strong> Overview</a></li><li><a href="rudimentary-execution-environment.html"><strong aria-hidden="true">2.</strong> A Rudimentary Execution Environment</a></li><li><a href="better-plugins.html" class="active"><strong aria-hidden="true">3.</strong> A Better Plugin Interface</a></li></ol>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -140,48 +140,31 @@
 
                 <div id="content" class="content">
                     <main>
-                        <a class="header" href="#creating-a-botnet---a-thought-experiment-on-using-wasm-for-plugins" id="creating-a-botnet---a-thought-experiment-on-using-wasm-for-plugins"><h1>Creating a Botnet - A Thought Experiment on Using WASM for Plugins</h1></a>
-<p>There's a lot of fuss being made in the <em>Rust</em> community about <em>Web Assembly</em>.
-In particular the ability to compile <em>Rust</em> (or any other supported language) to
-an architecture-independent binary format for executing sandboxed code.</p>
-<p>I think this is awesome.</p>
-<p>The first thing which comes to mind is using WASM for dynamically adding
-functionality to a program (commonly referred to as a <em>plugin</em>), and what better
-way to explore this than implementing our own crappy botnet?</p>
-<a class="header" href="#the-rough-design" id="the-rough-design"><h2>The Rough Design</h2></a>
-<p>Our botnet will be composed of a couple main parts:</p>
-<ul>
-<li>The server - for serving up &quot;jobs&quot; to execute</li>
-<li>The execution environment - a sandbox for executing jobs and letting them
-interact with the wider world</li>
-<li>The jobs to be executed - WASM modules which expose some sort of <code>Plugin</code>
-interface</li>
-</ul>
-<blockquote>
-<p><strong>Note:</strong> Because this is only a thought experiment, I won't be going into
-the mechanism used for <em>spreading</em> our bots.  This isn't really relevant to
-WASM and plugins, so I'll just be running the execution environment on
-machines I own (this is one of the things which separate &quot;real&quot; botnets and
-most online cloud platforms 😜).</p>
-</blockquote>
-<a class="header" href="#see-also" id="see-also"><h2>See Also</h2></a>
-<ul>
-<li><a href="https://youtu.be/YDQICTKlr9g">RustLatam 2019 - Kevin Hoffman: WebAssembly with Rust</a></li>
-<li><a href="https://youtu.be/ULQRGXziF3s">Rust Cologne: WASM in the wild</a></li>
-<li><a href="https://blog.cloudflare.com/introducing-wrangler-cli/">🤠 The Wrangler CLI: Deploying Rust with WASM on Cloudflare Workers</a></li>
-<li><a href="https://blog.scottlogic.com/2018/10/18/serverless-rust.html">Serverless Rust with AWS Lambda and WebAssembly</a></li>
-</ul>
+                        <a class="header" href="#a-better-plugin-interface" id="a-better-plugin-interface"><h1>A Better Plugin Interface</h1></a>
+<p>The current method of exporting an <code>on_startup()</code> function is... okay... for a
+plugin, but in Rust we can do a lot better.</p>
+<p>Throughout its lifetime, each job/plugin will go through several lifecycle
+stages. It'd be nice if we could encode this in the type system using traits.</p>
+<p>Maybe something like this:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+trait Plugin {
+    /// Start the plugin.
+    fn start(&amp;self);
+}
+#}</code></pre></pre>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
                         
-
-                        
-                            <a rel="next" href="rudimentary-execution-environment.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                                <i class="fa fa-angle-right"></i>
+                            <a rel="prev" href="rudimentary-execution-environment.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
                             </a>
+                        
+
                         
 
                         <div style="clear: both"></div>
@@ -191,11 +174,11 @@ most online cloud platforms 😜).</p>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
                 
-
-                
-                    <a href="rudimentary-execution-environment.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                        <i class="fa fa-angle-right"></i>
+                    <a href="rudimentary-execution-environment.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
                     </a>
+                
+
                 
             </nav>
 

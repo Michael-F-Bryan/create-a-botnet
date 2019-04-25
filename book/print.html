@@ -75,7 +75,7 @@
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <ol class="chapter"><li><a href="overview.html"><strong aria-hidden="true">1.</strong> Overview</a></li><li><a href="rudimentary-execution-environment/index.html"><strong aria-hidden="true">2.</strong> A Rudimentary Execution Environment</a></li></ol>
+            <ol class="chapter"><li><a href="overview.html"><strong aria-hidden="true">1.</strong> Overview</a></li><li><a href="rudimentary-execution-environment.html"><strong aria-hidden="true">2.</strong> A Rudimentary Execution Environment</a></li><li><a href="better-plugins.html"><strong aria-hidden="true">3.</strong> A Better Plugin Interface</a></li></ol>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -394,6 +394,20 @@ nice like <code>print(&amp;str) -&gt; Result&lt;usize, io::Error&gt;</code>?</li
 problems around accessing WASM memory, so we'll probably borrow some
 inspiration from them.</li>
 </ul>
+<a class="header" href="#a-better-plugin-interface" id="a-better-plugin-interface"><h1>A Better Plugin Interface</h1></a>
+<p>The current method of exporting an <code>on_startup()</code> function is... okay... for a
+plugin, but in Rust we can do a lot better.</p>
+<p>Throughout its lifetime, each job/plugin will go through several lifecycle
+stages. It'd be nice if we could encode this in the type system using traits.</p>
+<p>Maybe something like this:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+trait Plugin {
+    /// Start the plugin.
+    fn start(&amp;self);
+}
+#}</code></pre></pre>
 
                     </main>
 
